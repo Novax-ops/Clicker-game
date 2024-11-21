@@ -1,81 +1,89 @@
-points = 0
-points_per_click = 1
-passive_income = 0
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Clicker Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .button {
+            font-size: 20px;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        .upgrade {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Clicker Game</h1>
+    <h2 id="points">Points: 0</h2>
+    <button id="clickButton" class="button">Click Me!</button>
+    <div class="upgrade">
+        <button id="upgradeClickButton" class="button">Upgrade Click (Cost: 50)</button>
+        <button id="upgradePassiveButton" class="button">Upgrade Passive Income (Cost: 100)</button>
+    </div>
+    <script>
+        let points = 0;
+        let pointsPerClick = 1;
+        let passiveIncome = 0;
 
-# Upgrade costs
-click_upgrade_cost = 50
-passive_income_upgrade_cost = 100
+        let clickUpgradeCost = 50;
+        let passiveIncomeUpgradeCost = 100;
 
+        const pointsDisplay = document.getElementById('points');
+        const clickButton = document.getElementById('clickButton');
+        const upgradeClickButton = document.getElementById('upgradeClickButton');
+        const upgradePassiveButton = document.getElementById('upgradePassiveButton');
 
-# Update the points display
-def update_display():
-    points_label.config(text=f"Points: {points}")
-    click_upgrade_button.config(text=f"Upgrade Click (+{points_per_click + 1} per click)\nCost: {click_upgrade_cost}")
-    passive_income_button.config(text=f"Upgrade Passive Income (+1/sec)\nCost: {passive_income_upgrade_cost}")
+        // Update the points display
+        function updateDisplay() {
+            pointsDisplay.textContent = `Points: ${points}`;
+            upgradeClickButton.textContent = `Upgrade Click (Cost: ${clickUpgradeCost})`;
+            upgradePassiveButton.textContent = `Upgrade Passive Income (Cost: ${passiveIncomeUpgradeCost})`;
+        }
 
+        // Click handler
+        clickButton.addEventListener('click', () => {
+            points += pointsPerClick;
+            updateDisplay();
+        });
 
-# Handle button click
-def click():
-    global points
-    points += points_per_click
-    update_display()
+        // Upgrade click power
+        upgradeClickButton.addEventListener('click', () => {
+            if (points >= clickUpgradeCost) {
+                points -= clickUpgradeCost;
+                pointsPerClick++;
+                clickUpgradeCost = Math.floor(clickUpgradeCost * 1.5);
+                updateDisplay();
+            } else {
+                alert("Not enough points!");
+            }
+        });
 
+        // Upgrade passive income
+        upgradePassiveButton.addEventListener('click', () => {
+            if (points >= passiveIncomeUpgradeCost) {
+                points -= passiveIncomeUpgradeCost;
+                passiveIncome++;
+                passiveIncomeUpgradeCost = Math.floor(passiveIncomeUpgradeCost * 1.5);
+                updateDisplay();
+            } else {
+                alert("Not enough points!");
+            }
+        });
 
-# Upgrade click power
-def upgrade_click():
-    global points, points_per_click, click_upgrade_cost
-    if points >= click_upgrade_cost:
-        points -= click_upgrade_cost
-        points_per_click += 1
-        click_upgrade_cost = int(click_upgrade_cost * 1.5)
-        update_display()
-    else:
-        messagebox.showinfo("Not enough points", "You need more points to buy this upgrade!")
-
-
-# Upgrade passive income
-def upgrade_passive_income():
-    global points, passive_income, passive_income_upgrade_cost
-    if points >= passive_income_upgrade_cost:
-        points -= passive_income_upgrade_cost
-        passive_income += 1
-        passive_income_upgrade_cost = int(passive_income_upgrade_cost * 1.5)
-        update_display()
-    else:
-        messagebox.showinfo("Not enough points", "You need more points to buy this upgrade!")
-
-
-# Passive income generation
-def generate_passive_income():
-    global points
-    points += passive_income
-    update_display()
-    root.after(1000, generate_passive_income)  # Call this function again after 1 second
-
-
-# Initialize the GUI
-root = tk.Tk()
-root.title("Clicker Game")
-
-# Points display
-points_label = tk.Label(root, text=f"Points: {points}", font=("Arial", 16))
-points_label.pack(pady=10)
-
-# Click button
-click_button = tk.Button(root, text="Click Me!", font=("Arial", 14), command=click)
-click_button.pack(pady=10)
-
-# Upgrade buttons
-click_upgrade_button = tk.Button(root, text=f"Upgrade Click (+{points_per_click + 1} per click)\nCost: {click_upgrade_cost}",
-                                  font=("Arial", 12), command=upgrade_click)
-click_upgrade_button.pack(pady=10)
-
-passive_income_button = tk.Button(root, text=f"Upgrade Passive Income (+1/sec)\nCost: {passive_income_upgrade_cost}",
-                                   font=("Arial", 12), command=upgrade_passive_income)
-passive_income_button.pack(pady=10)
-
-# Start passive income generation
-generate_passive_income()
-
-# Run the GUI event loop
-root.mainloop()
+        // Passive income generator
+        setInterval(() => {
+            points += passiveIncome;
+            updateDisplay();
+        }, 1000);
+    </script>
+</body>
+</html>
